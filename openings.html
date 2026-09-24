@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Open lesson times | Las Vegas Music School</title>
+<meta name="description" content="See open lesson times across all five Las Vegas Music School studios and online, by location and instrument.">
+<meta property="og:title" content="Open lesson times | Las Vegas Music School">
+<meta property="og:description" content="See open lesson times across all five Las Vegas Music School studios and online, by location and instrument.">
+<meta property="og:image" content="assets/img/guitar-amp.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('motion');</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr"><div class="m">
+<a class="logo" href="index.html"><img src="assets/img/logo-ink.png" alt="Las Vegas Music School" width="63" height="48"></a>
+<button class="tog" aria-expanded="false" aria-controls="nav">Menu</button>
+<nav class="nav" id="nav" aria-label="Main">
+<a href="index.html#lessons" data-nav="home">Lessons</a><a href="instructors.html" data-nav="instructors">Instructors</a><a href="adult-lessons.html" data-nav="adult-lessons">Adult lessons</a><a href="openings.html" data-nav="openings" aria-current="page">Openings</a><a href="index.html#online">Online</a><a href="index.html#locations">Locations</a><a href="https://www.lasvegasmusicschools.com/prices" target="_blank" rel="noopener">Prices</a>
+<a class="cta" href="book.html">Free assessment</a>
+</nav></div></header>
+<main id="main" tabindex="-1">
+
+<section class="blk"><div class="m">
+<div class="split"><span class="label">Openings</span><div class="r"><p class="small">Open lesson times across all five studios and online. Pick a location, choose a time, book it.</p></div></div>
+<div class="gap-l"></div>
+<div class="split" style="align-items:end"><h1 class="display">Find a time that works.</h1><div><span class="sample">Sample data. Live times will come from the scheduling system.</span></div></div>
+<div style="height:48px"></div>
+<div class="filters" role="group" aria-label="Location" id="locf"><button class="f" type="button" data-loc="all" aria-pressed="true">All locations</button><button class="f" type="button" data-loc="0" aria-pressed="false">Downtown Summerlin</button><button class="f" type="button" data-loc="1" aria-pressed="false">Tivoli Village</button><button class="f" type="button" data-loc="2" aria-pressed="false">Green Valley Ranch</button><button class="f" type="button" data-loc="3" aria-pressed="false">Arroyo Crossing</button><button class="f" type="button" data-loc="4" aria-pressed="false">The Gramercy</button><button class="f" type="button" data-loc="5" aria-pressed="false">Online</button></div>
+<div class="cal-bar">
+<div class="wk"><button type="button" id="prevw" aria-label="Previous week">Prev</button><button type="button" id="nextw" aria-label="Next week">Next</button><span id="wklabel" aria-live="polite"></span></div>
+<div class="cal-opts"><label class="small" for="inst">Instrument</label><select id="inst"><option value="">All instruments</option></select><label class="tg"><input type="checkbox" id="dayonly"> Daytime only</label></div>
+</div>
+<div class="cal-wrap"><div class="cal" id="cal" role="grid" aria-label="Open lesson times by day and time of day"></div></div>
+<div class="legend"><span><i style="background:var(--daylight)"></i>Weekday daytime</span><span><i style="background:#EDECEA"></i>Open</span><span><i style="background:repeating-linear-gradient(135deg,transparent 0 3px,#bbb 3px 4px)"></i>Full</span></div>
+<div class="slots" id="slots"><h3 id="slotsh">Choose a time block to see open lessons.</h3><div class="slot-list" id="slotl"></div></div>
+<div class="locsum"><div class="split"><span class="label">By location</span><table class="tbl"><thead><tr><th scope="col">Location</th><th scope="col">Open this week</th><th scope="col" class="hide-s">Daytime</th><th scope="col">Next opening</th></tr></thead><tbody id="locsum"></tbody></table></div></div>
+</div></section>
+<section class="blk night"><div class="m"><div class="split"><span class="label">New here?</span><div class="r"><h2 class="heading">Start with a complimentary Initial Assessment.</h2><p class="lede muted">Pick any open time above and book it as your assessment.</p></div></div></div></section>
+
+</main>
+<footer class="ftr">
+<div><h4>Studios</h4><ul><li>Downtown Summerlin</li><li>Tivoli Village</li><li>Green Valley Ranch</li><li>Arroyo Crossing</li><li>The Gramercy</li><li>Online</li></ul></div>
+<div><h4>Hours</h4><ul><li>Mon–Fri 7am–10pm</li><li>Sat–Sun 9am–8pm</li></ul></div>
+<div><h4>Contact</h4><ul><li><a href="tel:+17025181081">(702) 518-1081</a></li><li><a href="mailto:admin@lasvegasmusicschools.com">admin@lasvegasmusicschools.com</a></li></ul></div>
+<div><h4>Follow</h4><ul><li><a href="https://www.facebook.com/lasvegasmusicschools" target="_blank" rel="noopener">Facebook</a></li></ul></div>
+<div class="end"><img src="assets/img/logo-ink.png" alt="Las Vegas Music School" width="73" height="56"><span>© Las Vegas Music School</span></div>
+</footer>
+<script src="assets/js/slots.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
