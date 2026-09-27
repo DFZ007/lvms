@@ -19,7 +19,7 @@ LVMS.send=function(form,type,done,extra){
 };
 try{(function(){
 var m=document.getElementById('mast'),b=m.querySelector('.menu-btn');
-b.addEventListener('click',function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'Close':'Menu';});
+b.addEventListener('click',function(){var o=m.classList.toggle('open');document.body.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);b.textContent=o?'Close':'Menu';});
 var pages=[].slice.call(document.querySelectorAll('.page'));
 var LESSON=['piano','guitar','drums','woodwinds','brass','strings','lessons'];
 function show(p){pages.forEach(function(x){x.hidden=x.dataset.page!==p});
@@ -245,3 +245,5 @@ var d=[].slice.call(h.querySelectorAll('.ms-dot')),i=d.findIndex(function(b){ret
 }catch(e){if(window.console)console.warn("LVMS",e)}
 try{(function(){if(LVMS.page!=='thank-you-assessment')return;var r=null;try{r=JSON.parse(sessionStorage.getItem('lvms_req')||'null')}catch(x){}if(!r)return;
 var q=function(c){return document.querySelector(c)};if(r.n)q('.tya-name').textContent=' · '+r.n;q('.tya-when').textContent=r.w;q('.tya-where').textContent=r.p;if(r.i)q('.tya-instr').textContent=r.i;if(r.c)q('.tya-contact').textContent=r.c;if(r.g)q('.tya-gcal').href=r.g;})()}catch(e){}
+
+try{(function(){var m=document.getElementById('mast');if(!m)return;var b=m.querySelector('.menu-btn');function close(){if(!m.classList.contains('open'))return;m.classList.remove('open');document.body.classList.remove('menu-open');b.setAttribute('aria-expanded','false');b.textContent='Menu'}m.addEventListener('click',function(e){if(e.target.closest('.lv-nav a'))close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});addEventListener('resize',function(){if(innerWidth>900)close()})})();}catch(e){}
