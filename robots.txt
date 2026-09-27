@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /thank-you/
+Disallow: /thank-you-guide/
+Disallow: /thank-you-assessment/
+
+Sitemap: https://www.lasvegasmusicschools.com/sitemap.xml

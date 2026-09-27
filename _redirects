@@ -1,0 +1,17 @@
+# Cloudflare Pages redirects (old Squarespace URLs). Add any other URL that Search Console shows with traffic or links.
+/classes  /music-lessons/  301
+/theory-composition  /music-lessons/  301
+/piano  /piano-lessons-las-vegas/  301
+/guitar  /guitar-lessons-las-vegas/  301
+/guitar-lessons  /guitar-lessons-las-vegas/  301
+/bass-guitar  /guitar-lessons-las-vegas/  301
+/adult-guitar-lessons  /adult-music-lessons/  301
+/musicschool  /  301
+/music-school  /  301
+/home  /  301
+/new-page-1  /  301
+/join  /apply/  301
+/book  /book-now/  301
+/drums  /drum-lessons-las-vegas/  301
+/violin  /violin-lessons-las-vegas/  301
+/site-map.xml  /sitemap.xml  301
