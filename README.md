@@ -85,7 +85,7 @@ Don't point the live domain at this site until the launch checklist below is don
 
 ## Forms
 
-Every form (assessment booking, apply, contact, curriculum guide, gift card order, newsletter) posts to `/api/submit`, a Cloudflare Pages Function in `functions/api/submit.js`. It emails the submission to **admin@lasvegasmusicschools.com** through [Resend](https://resend.com), with the family's email as Reply-To so Ross can answer with one click. A hidden honeypot field drops most spam.
+Every form (assessment booking, apply, contact, curriculum guide, gift card order, newsletter) posts to `/api/submit`, a Cloudflare Pages Function in `functions/api/submit.js`. It emails the submission to **admin@lasvegasmusicschools.com** through [Resend](https://resend.com), with the family's email as Reply-To so the school can answer with one click. A hidden honeypot field drops most spam.
 
 One-time setup:
 
@@ -108,7 +108,7 @@ Gift card orders are requests: the school emails the buyer a payment link (for e
 
 - **Forms:** complete the Resend setup above and test each form end to end.
 - **Placeholders** in square brackets are still visible: studio parking and entrance details, instruments per studio, Google review count, the school's story, payment and make-up policies, voice lessons.
-- **Hours** differ between sources (site: Mon–Fri 7am–10pm, Sat–Sun 9am–8pm). Confirm with Ross and match the Google Business Profiles.
+- **Hours** differ between sources (site: Mon–Fri 7am–10pm, Sat–Sun 9am–8pm). Confirm with the school and match the Google Business Profiles.
 - **Photos.** Instrument and lesson photos are AI-generated placeholders; replace with real studio photos. Home-page portrait credits are listed on the About page; several licenses and photographers still need confirming. Living and recently deceased artists' likenesses need permission (see the hero photo sources page).
 - **Quotes** in the home carousel without a source line still need verifying.
 - **Redirects.** Add every old URL that Search Console shows with traffic or backlinks to `_redirects`.
