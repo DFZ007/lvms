@@ -83,15 +83,37 @@ Then open http://localhost:8000.
 
 Don't point the live domain at this site until the launch checklist below is done.
 
+## Forms
+
+Every form (assessment booking, apply, contact, curriculum guide, gift card order, newsletter) posts to `/api/submit`, a Cloudflare Pages Function in `functions/api/submit.js`. It emails the submission to **admin@lasvegasmusicschools.com** through [Resend](https://resend.com), with the family's email as Reply-To so Ross can answer with one click. A hidden honeypot field drops most spam.
+
+One-time setup:
+
+1. Create a free Resend account (3,000 emails a month) and add the domain `lasvegasmusicschools.com`. Resend shows a few DNS records (DKIM, SPF and a bounce MX on a `send.` subdomain). Add them where the domain's DNS is managed. They sit alongside the Google Workspace records and don't affect Gmail.
+2. In Resend, create an API key with "sending" access.
+3. In Cloudflare: Workers & Pages → this project → Settings → Variables and secrets, add:
+   - `RESEND_API_KEY` (type Secret): the key from step 2
+   - `MAIL_FROM`: `LVMS Website <website@lasvegasmusicschools.com>`
+   - `MAIL_TO` (optional): defaults to `admin@lasvegasmusicschools.com`
+   - `AUTOREPLY` (optional): `on` to send each family a short "we received your message" email
+4. Redeploy, then submit each form once and check the admin inbox (and spam folder the first time).
+
+If a send fails, the form stays on the page and asks the visitor to call (702) 518-1081 or email admin@lasvegasmusicschools.com, so nothing is lost silently.
+
+**GitHub Pages can't run the function.** To host there instead, set `LVMS_ENDPOINT` at the top of `assets/js/site.js` to a form service URL (for example a Formspree form set to deliver to admin@lasvegasmusicschools.com). The service must accept JSON and return `{"ok": true}` or be adapted accordingly.
+
+Gift card orders are requests: the school emails the buyer a payment link (for example a Stripe Payment Link), and the card is sent once paid. Newsletter sign-ups arrive as emails too; move them into a mailing list tool when one is chosen.
+
 ## Before launch
 
-- **Forms are demos.** Booking, apply, contact, curriculum-guide download, gift cards and newsletter don't send anything yet. Connect them to the booking system or a form service (e.g. a Cloudflare Worker or Formspree) and keep the thank-you pages as the destination.
+- **Forms:** complete the Resend setup above and test each form end to end.
 - **Placeholders** in square brackets are still visible: studio parking and entrance details, instruments per studio, Google review count, the school's story, payment and make-up policies, voice lessons.
 - **Hours** differ between sources (site: Mon–Fri 7am–10pm, Sat–Sun 9am–8pm). Confirm with Ross and match the Google Business Profiles.
 - **Photos.** Instrument and lesson photos are AI-generated placeholders; replace with real studio photos. Home-page portrait credits are listed on the About page; several licenses and photographers still need confirming. Living and recently deceased artists' likenesses need permission (see the hero photo sources page).
 - **Quotes** in the home carousel without a source line still need verifying.
 - **Redirects.** Add every old URL that Search Console shows with traffic or backlinks to `_redirects`.
 - **Analytics.** Add the Google Tag Manager container. The booking form pushes a `generate_lead` event to `dataLayer`.
+- **Curriculum guide PDF** doesn't exist yet. Requests arrive by email; send the guide manually until the PDF is written and linked from the thank-you page.
 
 ## Editing
 

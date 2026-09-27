@@ -1352,3 +1352,5 @@ body{background:var(--paper)!important}
 .hero-masters .ms-side .ms-quote p{font-size:clamp(28px,min(4.5vw,6vh),68px)}
 .hero-masters .ms-slide{padding-top:clamp(28px,7vh,120px)}}
 .motto-art{--staff:url(../img/staff-lines.png)}
+
+.hp{position:absolute!important;left:-10000px!important;width:1px;height:1px;overflow:hidden}

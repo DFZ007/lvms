@@ -1,3 +1,22 @@
+/* ---- Form delivery ------------------------------------------------------
+   Every form posts to LVMS_ENDPOINT, a Cloudflare Pages Function in
+   functions/api/submit.js that emails admin@lasvegasmusicschools.com.
+   To use a form service instead (e.g. Formspree on GitHub Pages), set
+   LVMS_ENDPOINT to its URL.                                                  */
+var LVMS_ENDPOINT='/api/submit';
+window.LVMS=window.LVMS||{};
+LVMS.send=function(form,type,done,extra){
+  var data={};try{new FormData(form).forEach(function(v,k){if(typeof v==='string'&&v.trim()!==''){data[k]=data[k]?data[k]+', '+v:v}})}catch(e){}
+  var body={type:type,page:location.pathname,fields:data,extra:extra||{}};
+  var btn=form.querySelector('[type=submit]'),lab=btn&&btn.innerHTML;if(btn){btn.disabled=true;btn.textContent='Sending…'}
+  function fail(){if(btn){btn.disabled=false;btn.innerHTML=lab}
+    var er=form.querySelector('.af-error,.sf-msg');if(er){er.hidden=false;er.textContent='Sorry, that didn’t send. Please call (702) 518-1081 or email admin@lasvegasmusicschools.com.'}}
+  var ctl=('AbortController' in window)?new AbortController():null;var to=setTimeout(function(){if(ctl)ctl.abort()},15000);
+  fetch(LVMS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctl?ctl.signal:undefined})
+   .then(function(r){clearTimeout(to);return r.ok?r.json():Promise.reject(r.status)})
+   .then(function(j){if(j&&j.ok){if(btn){btn.disabled=false;btn.innerHTML=lab}done()}else fail()})
+   .catch(function(){clearTimeout(to);fail()});
+};
 try{(function(){
 var m=document.getElementById('mast'),b=m.querySelector('.menu-btn');
 b.addEventListener('click',function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'Close':'Menu';});
@@ -33,7 +52,7 @@ start();})();
 
 (function(){var f=document.getElementById('sfnews');if(!f)return;var e=document.getElementById('sfemail'),m=document.getElementById('sfmsg');
 f.addEventListener('submit',function(ev){ev.preventDefault();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim())){m.textContent='Please enter a valid email address.';e.focus();return;}
-m.textContent='Thank you, you\u2019re on the list. (Prototype: not connected to a mailing list yet.)';e.value='';});})();
+LVMS.send(f,'Newsletter sign-up',function(){m.textContent='Thank you, you\u2019re on the list.';e.value=''});});})();
 
 (function(){var els=[].slice.call(document.querySelectorAll('.lv-feature,.lv-portrait'));
 if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(function(x){x.classList.add('in-color')});return;}
@@ -84,13 +103,13 @@ if(f){
  f.addEventListener('submit',function(e){e.preventDefault();sync();
   if(f.classList.contains('af-minor-warn')){var w=q(f,'[name=who]').closest('.af-field');w.classList.add('af-invalid');document.getElementById('af-error').textContent='A parent or guardian must complete the application for students under 18.';document.getElementById('af-error').hidden=false;w.scrollIntoView({block:'center'});return}
   document.getElementById('af-error').textContent='Please complete the highlighted fields.';
-  if(validate(f,'af-error')){try{var st=q(f,'[name=studio]'),md=val(f,'mode');sessionStorage.setItem('lvms_studio',md==='Online'?'online':(st&&st.value?st.value.toLowerCase().replace(/ /g,'-'):''));sessionStorage.setItem('lvms_book',JSON.stringify({n:q(f,'[name=name]').value,e:q(f,'[name=email]').value,p:q(f,'[name=phone]').value,i:q(f,'[name=instrument]').value}))}catch(x){}f.reset();location.href=LVMS.url('book')}});
+  if(validate(f,'af-error')){try{var st=q(f,'[name=studio]'),md=val(f,'mode');sessionStorage.setItem('lvms_studio',md==='Online'?'online':(st&&st.value?st.value.toLowerCase().replace(/ /g,'-'):''));sessionStorage.setItem('lvms_book',JSON.stringify({n:q(f,'[name=name]').value,e:q(f,'[name=email]').value,p:q(f,'[name=phone]').value,i:q(f,'[name=instrument]').value}))}catch(x){}LVMS.send(f,'Application',function(){f.reset();location.href=LVMS.url('book')})}});
 }
 var c=document.getElementById('contact-form');
 if(c){
  function csync(){var who=val(c,'c_who');show(qa(c,'.af-if-cguardian'),who==='A parent or guardian');q(c,'.af-teen').hidden=who!=='A teen student';var pr=val(c,'c_pref'),ph=q(c,'[name=c_phone]'),opt=q(c,'.af-opt');ph.required=(pr==='Phone'||pr==='Text');opt.textContent=ph.required?'':'(optional)';var l=ph.closest('.af-field').querySelector('.af-label');var st=l.querySelector('.af-req');if(ph.required&&!st){st=document.createElement('span');st.className='af-req';st.setAttribute('aria-hidden','true');st.textContent='*';l.appendChild(st)}else if(!ph.required&&st){st.remove()}}
  c.addEventListener('change',csync);csync();
- c.addEventListener('submit',function(e){e.preventDefault();if(validate(c,'cf-error')){try{sessionStorage.setItem('lvms_name',q(c,'[name=c_name]').value.trim().split(' ')[0])}catch(x){}c.reset();location.href=LVMS.url('thank-you-contact')}});
+ c.addEventListener('submit',function(e){e.preventDefault();if(validate(c,'cf-error')){try{sessionStorage.setItem('lvms_name',q(c,'[name=c_name]').value.trim().split(' ')[0])}catch(x){}LVMS.send(c,'Contact message',function(){c.reset();location.href=LVMS.url('thank-you-contact')})}});
 }
 })();
 }catch(e){if(window.console)console.warn("LVMS",e)}
@@ -105,7 +124,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[data-dl-
 d.querySelector('.dl-x').addEventListener('click',function(){d.close()});
 d.addEventListener('click',function(e){if(e.target===d)d.close()});
 d.addEventListener('click',function(e){if(e.target.closest('.dl-done a[href="#apply"]'))d.close()});
-f.addEventListener('submit',function(e){e.preventDefault();var ok=f.d_name.value.trim()&&f.d_email.checkValidity()&&f.d_email.value;[f.d_name,f.d_email].forEach(function(x){x.closest('.af-field').classList.toggle('af-invalid',!x.value.trim()||!x.checkValidity())});document.getElementById('dl-error').hidden=!!ok;if(!ok)return;try{sessionStorage.setItem('lvms_name',f.d_name.value.trim())}catch(x){}d.close();location.href=LVMS.url('thank-you-guide');});
+f.addEventListener('submit',function(e){e.preventDefault();var ok=f.d_name.value.trim()&&f.d_email.checkValidity()&&f.d_email.value;[f.d_name,f.d_email].forEach(function(x){x.closest('.af-field').classList.toggle('af-invalid',!x.value.trim()||!x.checkValidity())});document.getElementById('dl-error').hidden=!!ok;if(!ok)return;try{sessionStorage.setItem('lvms_name',f.d_name.value.trim())}catch(x){}LVMS.send(f,'Curriculum guide request',function(){d.close();location.href=LVMS.url('thank-you-guide')});});
 })();
 }catch(e){if(window.console)console.warn("LVMS",e)}
 try{(function(){var m=document.querySelector('.motto');if(!m||!('IntersectionObserver' in window)){if(m)m.classList.add('playing');return}
@@ -118,7 +137,7 @@ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 function start(){stop();t=setInterval(function(){go((i+1)%sl.length)},5500)}function stop(){clearInterval(t)}
 r.addEventListener('mouseenter',stop);r.addEventListener('mouseleave',start);start();});
 }catch(e){if(window.console)console.warn("LVMS",e)}
-try{(function(){[].forEach.call(document.querySelectorAll('.gform'),function(f){f.addEventListener('submit',function(e){e.preventDefault();var n=f.g_name,m=f.g_email,ok=n.value.trim()&&m.value&&m.checkValidity();[n,m].forEach(function(x){x.closest('.af-field').classList.toggle('af-invalid',!x.value.trim()||!x.checkValidity())});f.querySelector('.af-error').hidden=!!ok;if(!ok)return;try{sessionStorage.setItem('lvms_name',n.value.trim())}catch(x){}f.reset();location.href=LVMS.url('thank-you-guide');});});})();
+try{(function(){[].forEach.call(document.querySelectorAll('.gform'),function(f){f.addEventListener('submit',function(e){e.preventDefault();var n=f.g_name,m=f.g_email,ok=n.value.trim()&&m.value&&m.checkValidity();[n,m].forEach(function(x){x.closest('.af-field').classList.toggle('af-invalid',!x.value.trim()||!x.checkValidity())});f.querySelector('.af-error').hidden=!!ok;if(!ok)return;try{sessionStorage.setItem('lvms_name',n.value.trim())}catch(x){}LVMS.send(f,'Curriculum guide request',function(){f.reset();location.href=LVMS.url('thank-you-guide')});});});})();
 }catch(e){if(window.console)console.warn("LVMS",e)}
 try{(function(){var K=['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid'],d={};
 try{d=JSON.parse(sessionStorage.getItem('lvms_attr')||'{}')}catch(e){}
@@ -177,7 +196,7 @@ f.addEventListener('submit',function(e){e.preventDefault();var ok=st.time;[].for
  R.querySelector('.bk-gcal')||0;var done=document.getElementById('bk-done');done.querySelector('.bk-gcal').href='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('Initial Assessment, Las Vegas Music School')+'&dates='+z(s)+'/'+z(e2)+'&ctz=America/Los_Angeles&location='+encodeURIComponent(where);
  done.querySelector('.bk-dn').textContent=f.b_name.value.trim()?', '+f.b_name.value.trim().split(' ')[0]:'';
  done.querySelector('.bk-done-line').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' at '+fmt(st.time.h,st.time.m)+', '+(st.studio==='online'?'online on Zoom or Google Meet. We will email your link.':st.name+', '+st.addr+'.')+' A confirmation is on its way to '+f.b_email.value+'.';
- try{var fn=f.b_name.value.trim().split(' ')[0];sessionStorage.setItem('lvms_req',JSON.stringify({n:fn,w:d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' at '+fmt(st.time.h,st.time.m)+' (requested)',p:st.studio==='online'?'Online, on Zoom or Google Meet':st.name+', '+st.addr,i:(f.b_instr&&f.b_instr.value)||'',c:[f.b_phone&&f.b_phone.value.trim(),f.b_email.value.trim()].filter(Boolean).join(' · '),g:done.querySelector('.bk-gcal').href.replace(encodeURIComponent('Initial Assessment, Las Vegas Music School'),encodeURIComponent('Initial Assessment (requested), Las Vegas Music School'))}))}catch(x){}try{window.dataLayer=window.dataLayer||[];dataLayer.push({event:'generate_lead',lead_type:'assessment_request',studio:st.studio})}catch(x){}f.reset();location.href=LVMS.url('thank-you-assessment')});
+ try{var fn=f.b_name.value.trim().split(' ')[0];sessionStorage.setItem('lvms_req',JSON.stringify({n:fn,w:d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' at '+fmt(st.time.h,st.time.m)+' (requested)',p:st.studio==='online'?'Online, on Zoom or Google Meet':st.name+', '+st.addr,i:(f.b_instr&&f.b_instr.value)||'',c:[f.b_phone&&f.b_phone.value.trim(),f.b_email.value.trim()].filter(Boolean).join(' · '),g:done.querySelector('.bk-gcal').href.replace(encodeURIComponent('Initial Assessment, Las Vegas Music School'),encodeURIComponent('Initial Assessment (requested), Las Vegas Music School'))}))}catch(x){}try{window.dataLayer=window.dataLayer||[];dataLayer.push({event:'generate_lead',lead_type:'assessment_request',studio:st.studio})}catch(x){}var X={};try{var RQ=JSON.parse(sessionStorage.getItem('lvms_req')||'{}');X={'Requested time':RQ.w,'Studio':RQ.p}}catch(x){}LVMS.send(f,'Assessment request',function(){f.reset();location.href=LVMS.url('thank-you-assessment')},X)});
 function pre(){var id='';try{id=sessionStorage.getItem('lvms_studio')||'';var b=JSON.parse(sessionStorage.getItem('lvms_book')||'null');if(b){if(b.n)f.b_name.value=b.n;if(b.e)f.b_email.value=b.e;if(b.p)f.b_phone.value=b.p;if(b.i)f.b_instr.value=b.i;sessionStorage.removeItem('lvms_book')}sessionStorage.removeItem('lvms_studio')}catch(x){}
  if(id){var b2=q('.bk-studio[data-id="'+id+'"]');if(b2)studioPick(b2)}}
 document.addEventListener('click',function(e){var a=e.target.closest('a[data-studio]');if(a){try{sessionStorage.setItem('lvms_studio',a.dataset.studio)}catch(x){}}},true);
@@ -210,8 +229,8 @@ f.addEventListener('submit',function(e){e.preventDefault();var ok=true;
  q('#gc-err').hidden=ok;if(!ok)return;
  var to=f.gc_to.value.trim(),them=(f.querySelector('[name=gc_del]:checked')||{}).value!=='me',d=f.gc_date.value;
  set('.gc-dn','Thank you, '+f.gc_from.value.trim().split(' ')[0]);
- set('.gc-done-line',money(amt())+' for '+to+'. '+(them?(d?'It will arrive in '+to+'’s inbox on '+new Date(d+'T12:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})+', ':'It’s on its way to '+f.gc_toemail.value.trim()+' now, ')+'with your note and a copy to you.':'It’s on its way to your inbox, ready to print or forward.')+' Receipt sent to '+f.gc_fromemail.value.trim()+'.');
- q('#gc-main').hidden=true;var dn=q('#gc-done');dn.hidden=false;dn.focus({preventScroll:true});window.scrollTo({top:dn.getBoundingClientRect().top+window.scrollY-140,behavior:'smooth'})});
+ set('.gc-done-line',money(amt())+' for '+to+'. '+(them?(d?'Once paid, it will arrive in '+to+'’s inbox on '+new Date(d+'T12:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})+', ':'Once paid, it goes to '+f.gc_toemail.value.trim()+', ')+'with your note and a copy to you.':'Once paid, it comes to your inbox, ready to print or forward.')+' We\u2019ll email a secure payment link to '+f.gc_fromemail.value.trim()+'. The card is sent once payment is complete.');
+ var X={Amount:money(amt()),Option:(OPT[opt()]||{}).l||''};LVMS.send(f,'Gift card order',function(){q('#gc-main').hidden=true;var dn=q('#gc-done');dn.hidden=false;dn.focus({preventScroll:true});window.scrollTo({top:dn.getBoundingClientRect().top+window.scrollY-140,behavior:'smooth'})},X)});
 q('.gc-again').addEventListener('click',function(){f.reset();code='LVMS · '+Math.random().toString(36).slice(2,6).toUpperCase()+' · '+Math.random().toString(36).slice(2,6).toUpperCase();upd();q('#gc-done').hidden=true;q('#gc-main').hidden=false;q('.gc-hero').scrollIntoView({behavior:'smooth'})});
 })();
 }catch(e){if(window.console)console.warn("LVMS",e)}
